@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verken Climature — speel</title>
+  <meta name="description" content="Loop met W A S D vrij rond door een klein Climature-wereldje en ontdek hoe zon, panelen, thuisbatterij en woning samenwerken.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    .explore-page {
+      background:
+        radial-gradient(circle at 88% 6%, rgba(182,215,42,0.16), transparent 30rem),
+        radial-gradient(circle at 4% 96%, rgba(31,107,58,0.1), transparent 24rem),
+        linear-gradient(160deg, #ffffff 0%, var(--bg-deep) 72%);
+      color: var(--ink);
+    }
+
+    .explore-hero {
+      padding: clamp(48px, 7vw, 88px) 0 clamp(14px, 2.5vw, 26px);
+      text-align: center;
+    }
+
+    .explore-hero .eyebrow { color: var(--green); }
+
+    .explore-hero h1 {
+      max-width: none;
+      margin: 0 auto;
+      font-size: clamp(46px, 9vw, 104px);
+      color: var(--ink);
+      line-height: 0.9;
+    }
+
+    .explore-hero .lead { margin: 18px auto 0; }
+
+    .explore-section { padding: clamp(8px, 2vw, 22px) 0 clamp(56px, 9vw, 104px); }
+
+    /* ===== Stage ===== */
+    .explore-stage {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(16,32,23,0.16);
+      background: #0B2F1A;
+      line-height: 0;
+    }
+
+    .explore-stage canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+
+    /* hint-pill */
+    .play-hint {
+      position: absolute;
+      left: 50%;
+      top: 14px;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 8px 16px;
+      border: 1px solid rgba(250,251,247,0.22);
+      border-radius: 999px;
+      background: rgba(11,47,26,0.55);
+      backdrop-filter: blur(8px);
+      color: rgba(250,251,247,0.92);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .play-hint.is-hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .play-hint svg { width: 15px; height: 15px; }
+
+    /* info-pill (POI) */
+    .poi-label {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%) translateY(12px);
+      max-width: min(440px, calc(100% - 32px));
+      padding: 12px 18px;
+      border: 1px solid rgba(182,215,42,0.4);
+      border-radius: 14px;
+      background: rgba(11,47,26,0.82);
+      backdrop-filter: blur(10px);
+      color: #FAFBF7;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      line-height: 1.35;
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .poi-label.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .poi-label b {
+      display: block;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+      color: #B6D72A;
+      margin-bottom: 2px;
+    }
+
+    .poi-label span {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 13px;
+      color: rgba(250,251,247,0.88);
+    }
+
+    /* ===== D-pad (touch) ===== */
+    .dpad {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      display: none;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 6px;
+      z-index: 4;
+    }
+
+    .dpad button {
+      border: 1px solid rgba(182,215,42,0.4);
+      background: rgba(11,47,26,0.6);
+      backdrop-filter: blur(8px);
+      color: #B6D72A;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .dpad button:active { background: rgba(182,215,42,0.22); }
+    .dpad button svg { width: 22px; height: 22px; }
+    .dpad .d-up    { grid-column: 2; grid-row: 1; }
+    .dpad .d-left  { grid-column: 1; grid-row: 2; }
+    .dpad .d-right { grid-column: 3; grid-row: 2; }
+    .dpad .d-down  { grid-column: 2; grid-row: 3; }
+
+    @media (hover: none), (max-width: 760px) {
+      .dpad { display: grid; }
+    }
+
+    /* losse toetsen-uitleg onder de stage */
+    .key-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 18px;
+      margin-top: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .key-legend kbd {
+      display: inline-block;
+      min-width: 22px;
+      padding: 3px 7px;
+      margin: 0 2px;
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .play-hint, .poi-label { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Naar inhoud</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="Climature.html" aria-label="Climature home">
+          <svg class="brand-mark" viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <path d="M27 56 L27 90 L83 90 L83 56" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M19 59 L55 30 L91 59" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M61 40 C61 23 76 15 92 13 C88 28 77 38 61 40 Z" fill="#B6D72A"/>
+            <path d="M60 49 L42 73 L54 73 L48 92 L72 62 L59 62 L66 49 Z" fill="#B6D72A"/>
+          </svg>
+          <span class="brand-name">CLIMATURE</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" data-nav-toggle><span></span></button>
+        <nav class="main-nav" aria-label="Hoofdnavigatie" data-main-nav>
+          <a href="Climature.html">Home</a>
+          <a href="HoeWerkenWij.html">Hoe werken wij</a>
+          <a href="EnergieFlow.html">Energie in beweging</a>
+          <a href="SpeelMetDeZon.html">Speel met de zon</a>
+          <a href="Verken.html" aria-current="page">Verken</a>
+          <a href="Energiescan.html">Energiescan</a>
+          <a href="Stijlen.html">Stijlen</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="explore-page">
+
+      <div class="explore-hero">
+        <div class="container">
+          <p class="eyebrow">Speeltuin</p>
+          <h1>Verken Climature.</h1>
+          <p class="lead">Loop rond met W A S D (of de pijltjes) en ontdek hoe een Climature-woning leeft: wandel langs de zon, de zonnepanelen, de thuisbatterij en het huis.</p>
+        </div>
+      </div>
+
+      <section class="explore-section">
+        <div class="container">
+          <div data-game>
+            <div class="explore-stage" aria-label="Verkenwereld: loop met W A S D rond. De omgeving toont de zon, zonnepanelen, een thuisbatterij en het Climature-huis.">
+              <canvas data-game-canvas></canvas>
+
+              <p class="play-hint" data-hint>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 11V6a3 3 0 0 1 6 0v5M9 11l-1.5-1.5a1.8 1.8 0 0 0-2.6 2.6L9 16.5a5 5 0 0 0 4 2H15a4 4 0 0 0 4-4v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Loop met W A S D · pijltjes ook
+              </p>
+
+              <div class="poi-label" data-poi-label aria-live="polite">
+                <b data-poi-title></b>
+                <span data-poi-text></span>
+              </div>
+
+              <div class="dpad" role="group" aria-label="Bestuur de speler">
+                <button class="d-up" type="button" data-dir="up" aria-label="Omhoog">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="d-left" type="button" data-dir="left" aria-label="Links">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="d-right" type="button" data-dir="right" aria-label="Rechts">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="d-down" type="button" data-dir="down" aria-label="Omlaag">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <p class="key-legend">
+              <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> lopen</span>
+              <span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> ook prima</span>
+              <span>Loop naar een onderdeel voor uitleg</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-band reveal">
+            <p class="eyebrow">Van verkennen naar doen</p>
+            <h2>Klaar om je eigen energiesysteem te bouwen?</h2>
+            <p class="lead">Je hebt net gezien hoe zon, panelen, batterij en woning samenwerken. Speel verder met de zon of bereken meteen jouw besparing.</p>
+            <div class="button-row">
+              <a class="btn btn-primary" href="Energiescan.html">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Doe de gratis energiescan
+              </a>
+              <a class="btn btn-secondary" href="SpeelMetDeZon.html">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Speel met de zon
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <a href="Climature.html">CLIMATURE</a>
+        <span>&copy; Climature - kracht uit de natuur</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/explore-game.js" defer></script>
+</body>
+</html>
