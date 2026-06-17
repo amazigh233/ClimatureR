@@ -1,0 +1,30 @@
+/*
+Theme Name: Climature
+Theme URI: https://climature.example
+Author: Climature
+Author URI: https://climature.example
+Description: Climature — slimme thuisenergie. Maatwerk classic-thema met interactieve energiepagina's (3D-energieflow, zon-sandbox, verkengame en energiescan). Omgezet vanuit het statische prototype.
+Version: 1.0.0
+Requires at least: 6.1
+Tested up to: 6.5
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: climature
+*/
+
+/*
+  De werkelijke styling staat in assets/css/site.css (globaal) en de
+  conditionele page-*.css bestanden. Dit bestand bevat alleen de
+  verplichte WordPress thema-header plus kleine WP-specifieke aanvullingen.
+*/
+
+/* Het primaire menu wordt door Climature_Nav_Walker als platte <a>-tags
+   gerenderd, zodat de bestaande .main-nav-styling in site.css klopt.
+   Mocht WP ergens toch een lijst tonen (fallback), dan dit nette default: */
+.main-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: contents;
+}

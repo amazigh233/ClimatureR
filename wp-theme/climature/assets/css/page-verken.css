@@ -1,0 +1,185 @@
+    .explore-page {
+      background:
+        radial-gradient(circle at 88% 6%, rgba(182,215,42,0.16), transparent 30rem),
+        radial-gradient(circle at 4% 96%, rgba(31,107,58,0.1), transparent 24rem),
+        linear-gradient(160deg, #ffffff 0%, var(--bg-deep) 72%);
+      color: var(--ink);
+    }
+
+    .explore-hero {
+      padding: clamp(48px, 7vw, 88px) 0 clamp(14px, 2.5vw, 26px);
+      text-align: center;
+    }
+
+    .explore-hero .eyebrow { color: var(--green); }
+
+    .explore-hero h1 {
+      max-width: none;
+      margin: 0 auto;
+      font-size: clamp(46px, 9vw, 104px);
+      color: var(--ink);
+      line-height: 0.9;
+    }
+
+    .explore-hero .lead { margin: 18px auto 0; }
+
+    .explore-section { padding: clamp(8px, 2vw, 22px) 0 clamp(56px, 9vw, 104px); }
+
+    /* ===== Stage ===== */
+    .explore-stage {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(16,32,23,0.16);
+      background: #0B2F1A;
+      line-height: 0;
+    }
+
+    .explore-stage canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+
+    /* hint-pill */
+    .play-hint {
+      position: absolute;
+      left: 50%;
+      top: 14px;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 8px 16px;
+      border: 1px solid rgba(250,251,247,0.22);
+      border-radius: 999px;
+      background: rgba(11,47,26,0.55);
+      backdrop-filter: blur(8px);
+      color: rgba(250,251,247,0.92);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .play-hint.is-hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .play-hint svg { width: 15px; height: 15px; }
+
+    /* info-pill (POI) */
+    .poi-label {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%) translateY(12px);
+      max-width: min(440px, calc(100% - 32px));
+      padding: 12px 18px;
+      border: 1px solid rgba(182,215,42,0.4);
+      border-radius: 14px;
+      background: rgba(11,47,26,0.82);
+      backdrop-filter: blur(10px);
+      color: #FAFBF7;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      line-height: 1.35;
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .poi-label.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .poi-label b {
+      display: block;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+      color: #B6D72A;
+      margin-bottom: 2px;
+    }
+
+    .poi-label span {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 13px;
+      color: rgba(250,251,247,0.88);
+    }
+
+    /* ===== D-pad (touch) ===== */
+    .dpad {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      display: none;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 6px;
+      z-index: 4;
+    }
+
+    .dpad button {
+      border: 1px solid rgba(182,215,42,0.4);
+      background: rgba(11,47,26,0.6);
+      backdrop-filter: blur(8px);
+      color: #B6D72A;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .dpad button:active { background: rgba(182,215,42,0.22); }
+    .dpad button svg { width: 22px; height: 22px; }
+    .dpad .d-up    { grid-column: 2; grid-row: 1; }
+    .dpad .d-left  { grid-column: 1; grid-row: 2; }
+    .dpad .d-right { grid-column: 3; grid-row: 2; }
+    .dpad .d-down  { grid-column: 2; grid-row: 3; }
+
+    @media (hover: none), (max-width: 760px) {
+      .dpad { display: grid; }
+    }
+
+    /* losse toetsen-uitleg onder de stage */
+    .key-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 18px;
+      margin-top: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .key-legend kbd {
+      display: inline-block;
+      min-width: 22px;
+      padding: 3px 7px;
+      margin: 0 2px;
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .play-hint, .poi-label { transition: none; }
+    }
