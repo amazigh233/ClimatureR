@@ -1,0 +1,485 @@
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stijlen - Climature</title>
+  <meta name="description" content="Twaalf volledig uitgewerkte homepage-stijlen voor het Climature merk.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    /* ── Page-specific overrides for Stijlen ── */
+
+    /* Hero: let the h1 breathe past the site.css 12ch cap */
+    .page-hero h1 {
+      max-width: none;
+    }
+
+    /* Gallery grid: 2 columns ≥760px, 1 below */
+    .stijl-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(20px, 3vw, 32px);
+    }
+    @media (min-width: 760px) {
+      .stijl-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Card base */
+    .stijl-card {
+      display: block;
+      text-decoration: none;
+      background: #123C24;
+      border: 1px solid rgba(182, 215, 42, 0.18);
+      border-radius: 20px;
+      overflow: hidden;
+      color: #FAFBF7;
+      transition:
+        transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+    .stijl-card:hover {
+      transform: translateY(-6px);
+      border-color: #B6D72A;
+      box-shadow: 0 36px 70px -40px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Thumbnail area */
+    .stijl-thumb {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(182, 215, 42, 0.18);
+    }
+    .stijl-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .stijl-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      background: rgba(11, 47, 26, 0.86);
+      color: #B6D72A;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    /* Card body */
+    .stijl-body {
+      padding: 22px 24px 24px;
+    }
+    .stijl-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .stijl-body h3 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 30px;
+      margin: 0;
+      letter-spacing: 0.01em;
+      color: #FAFBF7;
+    }
+    .stijl-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: #B6D72A;
+      flex-shrink: 0;
+    }
+    .stijl-desc {
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(250, 251, 247, 0.74);
+      margin: 0 0 16px;
+    }
+    .stijl-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .stijl-chip {
+      font-size: 12px;
+      font-weight: 600;
+      color: #FAFBF7;
+      background: rgba(182, 215, 42, 0.12);
+      border: 1px solid rgba(182, 215, 42, 0.2);
+      padding: 5px 11px;
+      border-radius: 20px;
+    }
+    .stijl-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #B6D72A;
+    }
+
+    /* "Open huidige site" banner */
+    .current-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(182, 215, 42, 0.07);
+      border: 1px solid rgba(182, 215, 42, 0.2);
+      border-radius: 18px;
+      padding: clamp(22px, 3vw, 32px);
+      margin-top: clamp(36px, 5vw, 60px);
+    }
+    .current-banner h3 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      margin: 0 0 4px;
+      color: var(--ink);
+    }
+    .current-banner p {
+      font-size: 14.5px;
+      color: var(--muted);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Naar inhoud</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="Climature.html" aria-label="Climature home">
+          <svg class="brand-mark" viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <path d="M27 56 L27 90 L83 90 L83 56" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M19 59 L55 30 L91 59" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M61 40 C61 23 76 15 92 13 C88 28 77 38 61 40 Z" fill="#B6D72A"/>
+            <path d="M60 49 L42 73 L54 73 L48 92 L72 62 L59 62 L66 49 Z" fill="#B6D72A"/>
+          </svg>
+          <span class="brand-name">CLIMATURE</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" data-nav-toggle><span></span></button>
+        <nav class="main-nav" aria-label="Hoofdnavigatie" data-main-nav>
+          <a href="Climature.html">Home</a>
+          <a href="HoeWerkenWij.html">Hoe werken wij</a>
+          <a href="EnergieFlow.html">Energie in beweging</a>
+          <a href="SpeelMetDeZon.html">Speel met de zon</a>
+          <a href="PlanJeDak.html">Plan je dak</a>
+          <a href="Energiescan.html">Energiescan</a>
+          <a href="Stijlen.html" aria-current="page">Stijlen</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+
+      <!-- ═══ Hero ═══ -->
+      <section class="page-hero" aria-labelledby="styles-title">
+        <div class="container">
+          <p class="eyebrow">Twaalf richtingen · één merk</p>
+          <h1 id="styles-title">Kies een website&#8209;stijl.</h1>
+          <p class="lead">Twaalf volledig uitgewerkte homepages — dezelfde inhoud, telkens een ander gezicht: van het vertrouwde groen/wit tot animatie &amp; 3D, kleurvarianten en twee luxe edities met serif-typografie en champagnegoud.</p>
+        </div>
+      </section>
+
+      <!-- ═══ Gallery ═══ -->
+      <section class="section section-alt" aria-labelledby="style-grid-title">
+        <div class="container">
+
+          <div class="section-head">
+            <p class="eyebrow">Stijlrichtingen</p>
+            <h2 id="style-grid-title">Ontwerpstudies.</h2>
+          </div>
+
+          <div class="stijl-grid">
+
+            <!-- 01 Editorial -->
+            <a class="stijl-card" href="Editorial.html">
+              <div class="stijl-thumb" style="background:#FAFBF7;">
+                <img src="thumbs/editorial.png" alt="Editorial stijlvoorbeeld">
+                <span class="stijl-tag">BOLD EDITORIAL</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Editorial</h3>
+                  <span class="stijl-num">01</span>
+                </div>
+                <p class="stijl-desc">Enorme typografie, een strak magazine-grid en veel wit. Krachtig, redactioneel en zelfverzekerd.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Grote typografie</span>
+                  <span class="stijl-chip">Strak grid</span>
+                  <span class="stijl-chip">Scroll-reveals</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 02 Natuurlijk -->
+            <a class="stijl-card" href="Natuurlijk.html">
+              <div class="stijl-thumb" style="background:#F3F8F2;">
+                <img src="thumbs/natuurlijk.png" alt="Natuurlijk stijlvoorbeeld">
+                <span class="stijl-tag">PLAYFUL ORGANIC</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Natuurlijk</h3>
+                  <span class="stijl-num">02</span>
+                </div>
+                <p class="stijl-desc">Ronde vormen, zachte blobs en zwevende kaarten. Vriendelijk, warm en toegankelijk.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Organische vormen</span>
+                  <span class="stijl-chip">Pill-knoppen</span>
+                  <span class="stijl-chip">Zacht &amp; warm</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 03 Dashboard -->
+            <a class="stijl-card" href="Dashboard.html">
+              <div class="stijl-thumb" style="background:#0B2F1A;">
+                <img src="thumbs/dashboard.png" alt="Dashboard stijlvoorbeeld">
+                <span class="stijl-tag">TECH / DATA</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Dashboard</h3>
+                  <span class="stijl-num">03</span>
+                </div>
+                <p class="stijl-desc">Donker, immersief en datagedreven — met een live besparingscalculator die direct meerekent.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Live calculator</span>
+                  <span class="stijl-chip">Donker thema</span>
+                  <span class="stijl-chip">Cijfers &amp; grafiek</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 04 Swiss -->
+            <a class="stijl-card" href="Swiss.html">
+              <div class="stijl-thumb" style="background:#FAFBF7;">
+                <img src="thumbs/swiss.png" alt="Swiss stijlvoorbeeld">
+                <span class="stijl-tag">SWISS / MINIMAL</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Swiss</h3>
+                  <span class="stijl-num">04</span>
+                </div>
+                <p class="stijl-desc">Ultra-clean met haarlijnen, een 12-koloms grid en veel rust. Precies en tijdloos.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Veel witruimte</span>
+                  <span class="stijl-chip">Haarlijnen</span>
+                  <span class="stijl-chip">Klein accent</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 05 Kinetic -->
+            <a class="stijl-card" href="Kinetic.html">
+              <div class="stijl-thumb" style="background:#123C24;">
+                <img src="thumbs/kinetic.png" alt="Kinetic stijlvoorbeeld">
+                <span class="stijl-tag">3D · PARALLAX</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Kinetic</h3>
+                  <span class="stijl-num">05</span>
+                </div>
+                <p class="stijl-desc">Donker en immersief. De hero beweegt met je muis mee in 3D-diepte, kaarten kantelen en cijfers tellen op.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">3D parallax</span>
+                  <span class="stijl-chip">Muis-tracking</span>
+                  <span class="stijl-chip">Tel-animaties</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 06 Aurora -->
+            <a class="stijl-card" href="Aurora.html">
+              <div class="stijl-thumb" style="background:#0B2F1A;">
+                <img src="thumbs/aurora.png" alt="Aurora stijlvoorbeeld">
+                <span class="stijl-tag">3D · GLAS</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Aurora</h3>
+                  <span class="stijl-num">06</span>
+                </div>
+                <p class="stijl-desc">Levendige aurora-gradiënten in beweging, glaspanelen en een 3D-kubus die continu door de vier diensten draait.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Animated mesh</span>
+                  <span class="stijl-chip">Glassmorphism</span>
+                  <span class="stijl-chip">Roterende 3D-kubus</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 07 Showcase -->
+            <a class="stijl-card" href="Showcase.html">
+              <div class="stijl-thumb" style="background:#F3F8F2;">
+                <img src="thumbs/showcase.png" alt="Showcase stijlvoorbeeld">
+                <span class="stijl-tag">3D · COVERFLOW</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Showcase</h3>
+                  <span class="stijl-num">07</span>
+                </div>
+                <p class="stijl-desc">Licht en speels. Een 3D-coverflow carousel die je sleept of draait, plus kaarten die omdraaien bij hover.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Coverflow 3D</span>
+                  <span class="stijl-chip">Sleep &amp; swipe</span>
+                  <span class="stijl-chip">Flip-kaarten</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 08 Solaris -->
+            <a class="stijl-card" href="Solaris.html">
+              <div class="stijl-thumb" style="background:#123C24;">
+                <img src="thumbs/solaris.png" alt="Solaris stijlvoorbeeld">
+                <span class="stijl-tag">WARM · AMBER</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Solaris</h3>
+                  <span class="stijl-num">08</span>
+                </div>
+                <p class="stijl-desc">Dezelfde Aurora-lay-out, maar in warme zonsondergangtinten — amber, koraal en een diep espresso-bruin.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Warm palet</span>
+                  <span class="stijl-chip">Roterende 3D-kubus</span>
+                  <span class="stijl-chip">Animated mesh</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 09 Cobalt -->
+            <a class="stijl-card" href="Cobalt.html">
+              <div class="stijl-thumb" style="background:#0B2F1A;">
+                <img src="thumbs/cobalt.png" alt="Cobalt stijlvoorbeeld">
+                <span class="stijl-tag">KOEL · ELEKTRISCH</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Cobalt</h3>
+                  <span class="stijl-num">09</span>
+                </div>
+                <p class="stijl-desc">De Kinetic-lay-out in diep marineblauw met elektrisch blauw en cyaan. Koel, technisch en strak.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Koel palet</span>
+                  <span class="stijl-chip">3D parallax</span>
+                  <span class="stijl-chip">Tel-animaties</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 10 Bloom -->
+            <a class="stijl-card" href="Bloom.html">
+              <div class="stijl-thumb" style="background:#F3F8F2;">
+                <img src="thumbs/bloom.png" alt="Bloom stijlvoorbeeld">
+                <span class="stijl-tag">ZACHT · PASTEL</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Bloom</h3>
+                  <span class="stijl-num">10</span>
+                </div>
+                <p class="stijl-desc">De Showcase-lay-out in zachte lavendel en roze op blush. Speels, licht en vriendelijk.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Pastel palet</span>
+                  <span class="stijl-chip">Coverflow 3D</span>
+                  <span class="stijl-chip">Flip-kaarten</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 11 Luxe -->
+            <a class="stijl-card" href="Luxe.html">
+              <div class="stijl-thumb" style="background:#123C24;">
+                <img src="thumbs/luxe.png" alt="Luxe stijlvoorbeeld">
+                <span class="stijl-tag">LUXE · SMARAGD/GOUD</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Luxe</h3>
+                  <span class="stijl-num">11</span>
+                </div>
+                <p class="stijl-desc">Verfijnde serif-typografie, smaragdgroen en champagnegoud, royale witruimte en ingetogen beweging. Premium en tijdloos.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Serif-display</span>
+                  <span class="stijl-chip">Champagnegoud</span>
+                  <span class="stijl-chip">Verfijnde details</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+            <!-- 12 Noir -->
+            <a class="stijl-card" href="Noir.html">
+              <div class="stijl-thumb" style="background:#0B2F1A;">
+                <img src="thumbs/noir.png" alt="Noir stijlvoorbeeld">
+                <span class="stijl-tag">LUXE · OBSIDIAAN/GOUD</span>
+              </div>
+              <div class="stijl-body">
+                <div class="stijl-header">
+                  <h3>Noir</h3>
+                  <span class="stijl-num">12</span>
+                </div>
+                <p class="stijl-desc">Dezelfde luxe lay-out, maar in diep obsidiaanzwart met champagnegoud. Black-tie elegantie, volledig zonder groen.</p>
+                <div class="stijl-chips">
+                  <span class="stijl-chip">Obsidiaanzwart</span>
+                  <span class="stijl-chip">Champagnegoud</span>
+                  <span class="stijl-chip">Black-tie</span>
+                </div>
+                <span class="stijl-cta">Bekijk volledige pagina <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+
+          </div><!-- /.stijl-grid -->
+
+          <!-- "Open huidige site" banner -->
+          <div class="current-banner">
+            <div>
+              <h3>Plus de huidige live homepage</h3>
+              <p>De bestaande Climature-site met het energie-flow diagram en de volledige navigatie.</p>
+            </div>
+            <a class="btn btn-primary" href="Climature.html">Open huidige site →</a>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <a href="Climature.html">CLIMATURE</a>
+        <span>&copy; Climature — kracht uit de natuur</span>
+      </div>
+    </footer>
+  </div>
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>

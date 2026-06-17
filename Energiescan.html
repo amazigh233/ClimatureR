@@ -1,0 +1,1128 @@
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Energiescan — Climature</title>
+  <meta name="description" content="Bereken in 4 stappen hoeveel je kunt besparen met Climature. Ontvang jouw persoonlijk energierapport.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    .scan-page {
+      background:
+        radial-gradient(circle at 88% 6%, rgba(182,215,42,0.16), transparent 30rem),
+        radial-gradient(circle at 4% 96%, rgba(31,107,58,0.1), transparent 24rem),
+        linear-gradient(160deg, #ffffff 0%, var(--bg-deep) 70%);
+      color: var(--ink);
+    }
+
+    /* ---- Hero ---- */
+    .scan-hero {
+      padding: clamp(52px, 8vw, 96px) 0 clamp(36px, 5vw, 60px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scan-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(182,215,42,0.12), transparent 58%),
+        radial-gradient(circle at 20% 80%, rgba(31,107,58,0.07), transparent 40%);
+      pointer-events: none;
+    }
+
+    .scan-hero .eyebrow { color: var(--green); }
+
+    .scan-hero h1 {
+      max-width: none;
+      font-size: clamp(44px, 9vw, 108px);
+      color: var(--ink);
+      line-height: 0.9;
+    }
+
+    .scan-hero .lead {
+      color: var(--muted);
+      margin: 22px auto 0;
+    }
+
+    /* ---- Progress bar ---- */
+    .scan-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: clamp(28px, 4vw, 48px);
+    }
+
+    .scan-progress-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(18,60,36,0.2);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .scan-progress-dot.is-active {
+      border-color: var(--green-2);
+      background: rgba(182,215,42,0.18);
+      color: var(--green);
+      box-shadow: 0 0 0 4px rgba(182,215,42,0.16);
+    }
+
+    .scan-progress-dot.is-done {
+      border-color: var(--green-2);
+      background: var(--green-2);
+      color: #102017;
+    }
+
+    .scan-progress-line {
+      width: clamp(32px, 6vw, 56px);
+      height: 2px;
+      background: rgba(18,60,36,0.16);
+      border-radius: 999px;
+      transition: background 0.4s ease;
+    }
+
+    .scan-progress-line.is-done {
+      background: var(--green-2);
+    }
+
+    /* ---- Scan card ---- */
+    .scan-section {
+      padding: 0 0 clamp(64px, 10vw, 112px);
+    }
+
+    .scan-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: clamp(28px, 5vw, 56px);
+      max-width: 760px;
+      margin: 0 auto;
+      box-shadow: 0 30px 70px rgba(16,32,23,0.12);
+    }
+
+    /* ---- Steps ---- */
+    .scan-step { display: none; }
+
+    .scan-step.is-active {
+      display: block;
+      animation: stepIn 0.35s cubic-bezier(0.2,0.8,0.2,1) both;
+    }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .scan-step-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+
+    .scan-step h2 {
+      font-size: clamp(28px, 4.5vw, 46px);
+      color: var(--ink);
+      margin: 0 0 28px;
+      line-height: 1.05;
+    }
+
+    /* ---- Option cards (radio / checkbox shared) ---- */
+    .scan-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .scan-checks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 520px) {
+      .scan-options, .scan-checks { grid-template-columns: 1fr; }
+    }
+
+    .scan-option { position: relative; }
+
+    .scan-option input[type="radio"],
+    .scan-option input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .scan-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 22px 16px;
+      background: var(--surface-2);
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.2,0.8,0.2,1);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.35;
+      user-select: none;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .scan-option label:hover {
+      border-color: rgba(182,215,42,0.5);
+      background: rgba(182,215,42,0.08);
+      color: var(--ink);
+    }
+
+    .scan-option input:checked + label {
+      border-color: var(--green-2);
+      background: rgba(182,215,42,0.14);
+      color: var(--ink);
+      box-shadow: 0 0 0 4px rgba(182,215,42,0.14);
+    }
+
+    .scan-option svg { color: var(--green); }
+
+    .scan-option svg {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    /* ---- Slider (step 2) ---- */
+    .scan-slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .scan-slider-display { text-align: center; }
+
+    .scan-amount {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: clamp(64px, 12vw, 100px);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      display: block;
+    }
+
+    .scan-amount-sub {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    input[type="range"].scan-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(182,215,42,0.22);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].scan-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #B6D72A;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(16,32,23,0.25), 0 0 0 3px rgba(182,215,42,0.3);
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+
+    input[type="range"].scan-range::-webkit-slider-thumb:hover {
+      box-shadow: 0 2px 8px rgba(16,32,23,0.25), 0 0 0 7px rgba(182,215,42,0.2);
+    }
+
+    input[type="range"].scan-range::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #B6D72A;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(16,32,23,0.25);
+      cursor: pointer;
+    }
+
+    .scan-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ---- Nav buttons ---- */
+    .scan-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 34px;
+      gap: 12px;
+    }
+
+    .scan-nav-back {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 0 18px;
+      height: 46px;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scan-nav-back:hover {
+      border-color: rgba(18,60,36,0.4);
+      color: var(--ink);
+    }
+
+    .scan-nav-back[hidden] {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .scan-nav-next {
+      background: #B6D72A;
+      border: none;
+      border-radius: 8px;
+      color: #102017;
+      padding: 0 26px;
+      height: 46px;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 28px rgba(182,215,42,0.22);
+    }
+
+    .scan-nav-next:hover { background: #1F6B3A; }
+
+    /* ============ RESULT SCREEN ============ */
+    .scan-result { display: none; }
+
+    .scan-result.is-active {
+      display: block;
+      animation: stepIn 0.45s cubic-bezier(0.2,0.8,0.2,1) both;
+    }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(182,215,42,0.14);
+      border: 1px solid rgba(182,215,42,0.4);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .result-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: var(--green-2);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .result-heading {
+      font-size: clamp(28px, 4.5vw, 46px);
+      color: var(--ink);
+      margin: 4px 0 26px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 580px) {
+      .result-grid { grid-template-columns: 1fr; }
+    }
+
+    .result-metric {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px 18px;
+    }
+
+    .result-metric-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+
+    .result-metric-value {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: clamp(34px, 5vw, 50px);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      display: block;
+    }
+
+    .result-metric-unit {
+      font-size: 20px;
+      margin-left: 4px;
+    }
+
+    .result-metric-sub {
+      margin: 7px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ROI timeline */
+    .roi-timeline {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px 20px 16px;
+      margin-bottom: 18px;
+    }
+
+    .roi-timeline-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+
+    .roi-track {
+      position: relative;
+      height: 8px;
+      background: rgba(18,60,36,0.1);
+      border-radius: 999px;
+      overflow: visible;
+    }
+
+    .roi-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(182,215,42,0.7), #B6D72A);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .roi-marker {
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      background: #B6D72A;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      left: 0%;
+      transition: left 1.5s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 8px rgba(16,32,23,0.22), 0 0 0 4px rgba(182,215,42,0.22);
+    }
+
+    .roi-years {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .roi-year {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      color: rgba(16,32,23,0.4);
+    }
+
+    .roi-year.is-break {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* Recommendation */
+    .result-rec {
+      background: rgba(182,215,42,0.08);
+      border: 1px solid rgba(182,215,42,0.3);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+
+    .result-rec-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+
+    .result-rec-products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .result-rec-product {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 16px;
+      flex: 1 1 160px;
+    }
+
+    .result-rec-icon {
+      width: 38px;
+      height: 38px;
+      background: rgba(182,215,42,0.16);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--green);
+    }
+
+    .result-rec-icon svg { width: 20px; height: 20px; }
+
+    .result-rec-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+      display: block;
+    }
+
+    .result-rec-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      display: block;
+    }
+
+    .result-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .scan-restart {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    .scan-restart:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Naar inhoud</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="Climature.html" aria-label="Climature home">
+          <svg class="brand-mark" viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <path d="M27 56 L27 90 L83 90 L83 56" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M19 59 L55 30 L91 59" stroke="#FAFBF7" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M61 40 C61 23 76 15 92 13 C88 28 77 38 61 40 Z" fill="#B6D72A"/>
+            <path d="M60 49 L42 73 L54 73 L48 92 L72 62 L59 62 L66 49 Z" fill="#B6D72A"/>
+          </svg>
+          <span class="brand-name">CLIMATURE</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" data-nav-toggle><span></span></button>
+        <nav class="main-nav" aria-label="Hoofdnavigatie" data-main-nav>
+          <a href="Climature.html">Home</a>
+          <a href="HoeWerkenWij.html">Hoe werken wij</a>
+          <a href="EnergieFlow.html">Energie in beweging</a>
+          <a href="SpeelMetDeZon.html">Speel met de zon</a>
+          <a href="PlanJeDak.html">Plan je dak</a>
+          <a href="Energiescan.html" aria-current="page">Energiescan</a>
+          <a href="Stijlen.html">Stijlen</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="scan-page">
+
+      <!-- Hero -->
+      <div class="scan-hero">
+        <div class="container">
+          <p class="eyebrow">Jouw persoonlijk rapport</p>
+          <h1>Bereken wat<br>je bespaart.</h1>
+          <p class="lead">Vier vragen. Jouw persoonlijk Climature Energierapport — met aanbevolen producten, verwachte besparing en terugverdientijd.</p>
+
+          <!-- Step progress -->
+          <nav class="scan-progress" aria-label="Voortgang">
+            <div class="scan-progress-dot is-active" data-dot="1" aria-label="Stap 1: Woningtype">1</div>
+            <div class="scan-progress-line" data-line="1"></div>
+            <div class="scan-progress-dot" data-dot="2" aria-label="Stap 2: Maandrekening">2</div>
+            <div class="scan-progress-line" data-line="2"></div>
+            <div class="scan-progress-dot" data-dot="3" aria-label="Stap 3: Huidige situatie">3</div>
+            <div class="scan-progress-line" data-line="3"></div>
+            <div class="scan-progress-dot" data-dot="4" aria-label="Stap 4: Prioriteiten">4</div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Scan card -->
+      <section class="scan-section">
+        <div class="container">
+          <div class="scan-card">
+
+            <!-- ===== STEP 1: Woningtype ===== -->
+            <div class="scan-step is-active" id="step-1" role="group" aria-labelledby="step1-h">
+              <p class="scan-step-label">Stap 1 van 4 &nbsp;·&nbsp; Woningtype</p>
+              <h2 id="step1-h">Welk type woning heb je?</h2>
+              <div class="scan-options">
+
+                <div class="scan-option">
+                  <input type="radio" name="woning" id="w-tussenwoning" value="tussenwoning">
+                  <label for="w-tussenwoning">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <path d="M6 21L22 9L38 21V36H30V26H14V36H6V21Z" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                    </svg>
+                    Tussenwoning
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="radio" name="woning" id="w-vrijstaand" value="vrijstaand">
+                  <label for="w-vrijstaand">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <path d="M4 22L12 15V36H32V15L40 22" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M12 15L22 7L32 15" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M18 36V27H26V36" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M5 22L12 15M39 22L32 15" stroke="#B6D72A" stroke-width="1.6" opacity=".4" stroke-linecap="round"/>
+                    </svg>
+                    Vrijstaand
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="radio" name="woning" id="w-appartement" value="appartement">
+                  <label for="w-appartement">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <rect x="8" y="9" width="28" height="27" rx="1.5" stroke="#B6D72A" stroke-width="2.2"/>
+                      <path d="M8 18H36M8 27H36" stroke="#B6D72A" stroke-width="1.8" opacity=".5"/>
+                      <rect x="13" y="12" width="5" height="4" rx=".5" stroke="#B6D72A" stroke-width="1.6"/>
+                      <rect x="26" y="12" width="5" height="4" rx=".5" stroke="#B6D72A" stroke-width="1.6"/>
+                      <path d="M19 36V29H25V36" stroke="#B6D72A" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    Appartement
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="radio" name="woning" id="w-twee" value="twee-onder-een-kap">
+                  <label for="w-twee">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <path d="M3 22L11 15V36H22V15" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M11 15L16.5 10L22 15" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M22 15L27.5 10L33 15V36H41V22L33 15" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                    </svg>
+                    2-onder-1-kap
+                  </label>
+                </div>
+
+              </div>
+              <div class="scan-nav">
+                <button class="scan-nav-back" hidden aria-hidden="true">← Vorige</button>
+                <button class="scan-nav-next" data-next="2">Volgende →</button>
+              </div>
+            </div>
+
+            <!-- ===== STEP 2: Maandrekening ===== -->
+            <div class="scan-step" id="step-2" role="group" aria-labelledby="step2-h">
+              <p class="scan-step-label">Stap 2 van 4 &nbsp;·&nbsp; Maandrekening</p>
+              <h2 id="step2-h">Wat betaal je nu per maand?</h2>
+              <div class="scan-slider-wrap">
+                <div class="scan-slider-display">
+                  <span class="scan-amount" id="amount-display">€&nbsp;150</span>
+                  <p class="scan-amount-sub" id="kwh-display">≈ 395 kWh / maand</p>
+                </div>
+                <input type="range" class="scan-range" id="maand-slider" min="50" max="500" value="150" step="10"
+                       aria-label="Maandelijkse energierekening in euro's" aria-valuetext="€ 150">
+                <div class="scan-range-labels">
+                  <span>€ 50</span>
+                  <span>€ 500</span>
+                </div>
+              </div>
+              <div class="scan-nav">
+                <button class="scan-nav-back" data-back="1">← Vorige</button>
+                <button class="scan-nav-next" data-next="3">Volgende →</button>
+              </div>
+            </div>
+
+            <!-- ===== STEP 3: Huidige situatie ===== -->
+            <div class="scan-step" id="step-3" role="group" aria-labelledby="step3-h">
+              <p class="scan-step-label">Stap 3 van 4 &nbsp;·&nbsp; Huidige situatie</p>
+              <h2 id="step3-h">Wat heb je al in huis?</h2>
+              <div class="scan-checks">
+
+                <div class="scan-option">
+                  <input type="checkbox" id="has-panelen" name="huidig" value="panelen">
+                  <label for="has-panelen">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <rect x="5" y="13" width="15" height="10" rx="1" stroke="#B6D72A" stroke-width="2.2"/>
+                      <rect x="24" y="13" width="15" height="10" rx="1" stroke="#B6D72A" stroke-width="2.2"/>
+                      <rect x="5" y="27" width="15" height="10" rx="1" stroke="#B6D72A" stroke-width="2.2"/>
+                      <rect x="24" y="27" width="15" height="10" rx="1" stroke="#B6D72A" stroke-width="2.2"/>
+                      <path d="M12.5 13V9M31.5 13V9" stroke="#B6D72A" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                    </svg>
+                    Zonnepanelen
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="checkbox" id="has-batterij" name="huidig" value="batterij">
+                  <label for="has-batterij">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <rect x="9" y="14" width="22" height="18" rx="2" stroke="#B6D72A" stroke-width="2.2"/>
+                      <path d="M31 19h4v8h-4M9 19H5v8h4" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M20 19v6M17 25h6" stroke="#B6D72A" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Thuisbatterij
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="checkbox" id="has-warmtepomp" name="huidig" value="warmtepomp">
+                  <label for="has-warmtepomp">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <rect x="8" y="20" width="28" height="18" rx="2" stroke="#B6D72A" stroke-width="2.2"/>
+                      <circle cx="22" cy="29" r="5" stroke="#B6D72A" stroke-width="2"/>
+                      <path d="M22 8C20 12 14 16 22 20C30 16 24 12 22 8Z" stroke="#B6D72A" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    Warmtepomp
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="checkbox" id="has-niets" name="huidig" value="niets">
+                  <label for="has-niets">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <circle cx="22" cy="22" r="15" stroke="#B6D72A" stroke-width="2.2"/>
+                      <path d="M22 13v10l6 6" stroke="#B6D72A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Nog niets
+                  </label>
+                </div>
+
+              </div>
+              <div class="scan-nav">
+                <button class="scan-nav-back" data-back="2">← Vorige</button>
+                <button class="scan-nav-next" data-next="4">Volgende →</button>
+              </div>
+            </div>
+
+            <!-- ===== STEP 4: Prioriteiten ===== -->
+            <div class="scan-step" id="step-4" role="group" aria-labelledby="step4-h">
+              <p class="scan-step-label">Stap 4 van 4 &nbsp;·&nbsp; Prioriteiten</p>
+              <h2 id="step4-h">Wat is voor jou het belangrijkst?</h2>
+              <div class="scan-options">
+
+                <div class="scan-option">
+                  <input type="radio" name="prioriteit" id="p-besparen" value="besparen">
+                  <label for="p-besparen">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <circle cx="22" cy="24" r="14" stroke="#B6D72A" stroke-width="2.2"/>
+                      <path d="M22 11v3M22 34v3M9 24H6M38 24h-3" stroke="#B6D72A" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                      <path d="M18 21.5a4 4 0 1 0 8 0 4 4 0 0 0-8 0zM22 17v2M22 27v2M17 24.5l-1.5.5M28 21l-1.5.5" stroke="#B6D72A" stroke-width="1.8" stroke-linecap="round"/>
+                      <path d="M22 8l1 3-1 1-1-1z" fill="#B6D72A"/>
+                    </svg>
+                    Zo snel mogelijk besparen
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="radio" name="prioriteit" id="p-duurzaam" value="duurzaam">
+                  <label for="p-duurzaam">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <path d="M22 37C22 37 10 29 10 19C10 12.9 15.5 8 22 8C28.5 8 34 12.9 34 19C34 29 22 37 22 37Z" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M22 23C22 23 16 19 18 13C22 15 27 19 22 23Z" fill="rgba(182,215,42,0.25)" stroke="#B6D72A" stroke-width="1.6"/>
+                    </svg>
+                    Zo duurzaam mogelijk
+                  </label>
+                </div>
+
+                <div class="scan-option">
+                  <input type="radio" name="prioriteit" id="p-onafhankelijk" value="onafhankelijk">
+                  <label for="p-onafhankelijk">
+                    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                      <path d="M22 7l5.09 10.26L38 18.9l-8 7.8 1.88 11.09L22 32.73l-9.88 5.06L14 26.7l-8-7.8 10.91-1.64L22 7z" stroke="#B6D72A" stroke-width="2.2" stroke-linejoin="round"/>
+                    </svg>
+                    Energieonafhankelijkheid
+                  </label>
+                </div>
+
+              </div>
+              <div class="scan-nav">
+                <button class="scan-nav-back" data-back="3">← Vorige</button>
+                <button class="scan-nav-next" id="btn-rapport">Bekijk mijn rapport →</button>
+              </div>
+            </div>
+
+            <!-- ===== RESULT SCREEN ===== -->
+            <div class="scan-result" id="scan-result" aria-live="polite">
+              <div>
+                <span class="result-badge">Jouw Climature Energierapport</span>
+              </div>
+              <h2 class="result-heading" id="result-heading">Dit is jouw potentieel.</h2>
+
+              <div class="result-grid">
+                <div class="result-metric">
+                  <p class="result-metric-label">Jaarbesparing</p>
+                  <span class="result-metric-value">€&nbsp;<span id="res-saving">0</span></span>
+                  <p class="result-metric-sub">per jaar, indicatief</p>
+                </div>
+                <div class="result-metric">
+                  <p class="result-metric-label">CO₂-reductie</p>
+                  <span class="result-metric-value"><span id="res-trees">0</span><span class="result-metric-unit"> 🌳</span></span>
+                  <p class="result-metric-sub">bomen-equivalent per jaar</p>
+                </div>
+                <div class="result-metric">
+                  <p class="result-metric-label">Geschatte investering</p>
+                  <span class="result-metric-value">€&nbsp;<span id="res-invest">0</span></span>
+                  <p class="result-metric-sub">gratis adviesgesprek</p>
+                </div>
+              </div>
+
+              <div class="roi-timeline">
+                <p class="roi-timeline-label">Terugverdientijd — <span id="roi-label">berekenen…</span></p>
+                <div class="roi-track">
+                  <div class="roi-fill" id="roi-fill"></div>
+                  <div class="roi-marker" id="roi-marker"></div>
+                </div>
+                <div class="roi-years" id="roi-years"></div>
+              </div>
+
+              <div class="result-rec">
+                <p class="result-rec-label">Aanbevolen voor jou</p>
+                <div class="result-rec-products" id="result-products"></div>
+              </div>
+
+              <div class="result-cta">
+                <a class="btn btn-primary" href="HoeWerkenWij.html">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Plan een gratis gesprek
+                </a>
+                <button class="scan-restart" id="btn-restart" type="button">Scan opnieuw doen</button>
+              </div>
+            </div>
+
+          </div><!-- /.scan-card -->
+        </div><!-- /.container -->
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <a href="Climature.html">CLIMATURE</a>
+        <span>&copy; Climature - kracht uit de natuur</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/js/site.js" defer></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var PRODUCTS = {
+      panelen: {
+        name: 'Zonnepanelen',
+        desc: 'Opwek van eigen stroom',
+        svg: '<rect x="3" y="6" width="8" height="6" rx=".5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="6" width="8" height="6" rx=".5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="3" y="14" width="8" height="6" rx=".5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="14" width="8" height="6" rx=".5" stroke="currentColor" stroke-width="1.8" fill="none"/>'
+      },
+      batterij: {
+        name: 'Thuisbatterij',
+        desc: 'Opslag voor dag &amp; nacht',
+        svg: '<rect x="5" y="7" width="12" height="13" rx="1" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M17 10h2v7h-2M5 10H3v7h2" stroke="currentColor" stroke-width="1.8"/><path d="M11 10v4M9 14h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+      },
+      warmtepomp: {
+        name: 'Warmtepomp',
+        desc: 'Duurzame verwarming &amp; koeling',
+        svg: '<rect x="3" y="11" width="16" height="11" rx="1" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="11" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M11 3c0 0-4 4 0 7 4-3 0-7 0-7z" stroke="currentColor" stroke-width="1.6" fill="none"/>'
+      },
+      monitoring: {
+        name: 'Monitoring',
+        desc: 'Inzicht in opwek &amp; verbruik',
+        svg: '<rect x="2" y="4" width="20" height="13" rx="1" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 13l3-4 3 3 2-5 3 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
+      }
+    };
+
+    var currentStep = 1;
+    var userData = { woning: 'tussenwoning', maand: 150, huidig: [], prioriteit: 'besparen' };
+
+    // ---- Progress ----
+    function updateProgress(step) {
+      for (var i = 1; i <= 4; i++) {
+        var dot = document.querySelector('[data-dot="' + i + '"]');
+        var line = document.querySelector('[data-line="' + i + '"]');
+        if (!dot) continue;
+        dot.classList.toggle('is-active', i === step);
+        dot.classList.toggle('is-done', i < step);
+        if (line) line.classList.toggle('is-done', i < step);
+      }
+    }
+
+    // ---- Step switching ----
+    function showStep(n) {
+      document.querySelectorAll('.scan-step').forEach(function (el) { el.classList.remove('is-active'); });
+      document.getElementById('scan-result').classList.remove('is-active');
+      var t = document.getElementById('step-' + n);
+      if (t) { t.classList.add('is-active'); }
+      currentStep = n;
+      updateProgress(n);
+    }
+
+    function showResult() {
+      document.querySelectorAll('.scan-step').forEach(function (el) { el.classList.remove('is-active'); });
+      document.getElementById('scan-result').classList.add('is-active');
+      for (var i = 1; i <= 4; i++) {
+        var dot = document.querySelector('[data-dot="' + i + '"]');
+        var line = document.querySelector('[data-line="' + i + '"]');
+        if (dot) { dot.classList.remove('is-active'); dot.classList.add('is-done'); }
+        if (line) line.classList.add('is-done');
+      }
+      renderResult();
+    }
+
+    // ---- Delegation ----
+    document.addEventListener('click', function (e) {
+      var next = e.target.closest('[data-next]');
+      var back = e.target.closest('[data-back]');
+      var rapport = e.target.closest('#btn-rapport');
+      var restart = e.target.closest('#btn-restart');
+
+      if (next)    { collectStep(currentStep); showStep(parseInt(next.dataset.next, 10)); }
+      if (back)    { showStep(parseInt(back.dataset.back, 10)); }
+      if (rapport) { collectStep(4); showResult(); }
+      if (restart) {
+        document.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+        document.querySelectorAll('input[type=checkbox]').forEach(function (c) { c.checked = false; });
+        var sl = document.getElementById('maand-slider');
+        sl.value = 150;
+        updateSlider(150);
+        userData = { woning: 'tussenwoning', maand: 150, huidig: [], prioriteit: 'besparen' };
+        showStep(1);
+      }
+    });
+
+    // ---- Collect ----
+    function collectStep(step) {
+      if (step === 1) {
+        var sel = document.querySelector('input[name="woning"]:checked');
+        if (sel) userData.woning = sel.value;
+      }
+      if (step === 2) {
+        userData.maand = parseInt(document.getElementById('maand-slider').value, 10);
+      }
+      if (step === 3) {
+        userData.huidig = Array.from(document.querySelectorAll('input[name="huidig"]:checked')).map(function (c) { return c.value; });
+      }
+      if (step === 4) {
+        var sel2 = document.querySelector('input[name="prioriteit"]:checked');
+        if (sel2) userData.prioriteit = sel2.value;
+      }
+    }
+
+    // ---- Slider ----
+    function updateSlider(val) {
+      document.getElementById('amount-display').textContent = '€ ' + val;
+      var kwh = Math.round((val * 12) / (0.38 * 12 / (1000 / 2600)));
+      kwh = Math.round(val / 0.38);
+      document.getElementById('kwh-display').textContent = '≈ ' + kwh + ' kWh / maand';
+      var sl = document.getElementById('maand-slider');
+      sl.setAttribute('aria-valuetext', '€ ' + val);
+    }
+
+    document.getElementById('maand-slider').addEventListener('input', function () {
+      updateSlider(parseInt(this.value, 10));
+    });
+
+    // ---- Render result ----
+    function renderResult() {
+      var w = userData.woning;
+      var maand = userData.maand;
+      var huidig = userData.huidig;
+      var prio = userData.prioriteit;
+
+      var isBig = (w === 'vrijstaand' || w === 'twee-onder-een-kap');
+      var hasPanelen  = huidig.indexOf('panelen')    > -1;
+      var hasBatterij = huidig.indexOf('batterij')   > -1;
+      var hasPomp     = huidig.indexOf('warmtepomp') > -1;
+
+      // Recommend what they don't have
+      var recs = [];
+      if (!hasPanelen)    recs.push('panelen');
+      if (!hasBatterij)   recs.push('batterij');
+      if (!hasPomp && (isBig || huidig.indexOf('niets') > -1)) recs.push('warmtepomp');
+      recs.push('monitoring');
+
+      // Savings %
+      var pct = 0.38;
+      if (!hasPanelen)  pct += 0.0;  // panels give the base
+      if (!hasBatterij && hasPanelen) pct = 0.22; // only adding battery to existing panels
+      if (!hasPomp && recs.indexOf('warmtepomp') > -1) pct += 0.14;
+      if (huidig.indexOf('niets') > -1) pct = 0.52; // nothing → full stack
+
+      var jaarbesparing = Math.round(maand * 12 * Math.min(pct, 0.70));
+
+      var kwhPerMaand = Math.round(maand / 0.38);
+      var co2PerJaar  = Math.round(kwhPerMaand * 12 * 0.27);
+      var trees       = Math.max(1, Math.round(co2PerJaar / 21));
+
+      var invest = 0;
+      if (recs.indexOf('panelen')    > -1) invest += isBig ? 7500 : 5500;
+      if (recs.indexOf('batterij')   > -1) invest += 4200;
+      if (recs.indexOf('warmtepomp') > -1) invest += 5000;
+      invest = Math.round(invest / 500) * 500;
+
+      var roi = Math.max(1, Math.min(10, Math.round(invest / Math.max(jaarbesparing, 1))));
+
+      // Headings
+      var headings = {
+        besparen:      'Zo bespaar jij het meest.',
+        duurzaam:      'Zo word jij het duurzaamst.',
+        onafhankelijk: 'Zo word jij energieonafhankelijk.'
+      };
+      document.getElementById('result-heading').textContent = headings[prio] || 'Dit is jouw potentieel.';
+
+      // Animate numbers
+      animateCount('res-saving', jaarbesparing, 1300);
+      animateCount('res-trees',  trees,          900);
+      animateCount('res-invest', invest,         1150);
+
+      // ROI bar
+      buildROI(roi);
+
+      // Products
+      var container = document.getElementById('result-products');
+      container.innerHTML = '';
+      recs.forEach(function (key) {
+        var p = PRODUCTS[key];
+        container.innerHTML +=
+          '<div class="result-rec-product">' +
+            '<div class="result-rec-icon">' +
+              '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' + p.svg + '</svg>' +
+            '</div>' +
+            '<div>' +
+              '<span class="result-rec-name">' + p.name + '</span>' +
+              '<span class="result-rec-desc">' + p.desc + '</span>' +
+            '</div>' +
+          '</div>';
+      });
+    }
+
+    function animateCount(id, target, duration) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var start = performance.now();
+      (function tick(now) {
+        var t    = Math.min((now - start) / duration, 1);
+        var ease = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(ease * target).toLocaleString('nl-NL');
+        if (t < 1) requestAnimationFrame(tick);
+      }(start));
+    }
+
+    function buildROI(breakYear) {
+      var pct = Math.min((breakYear / 10) * 100, 100);
+
+      var yearsEl = document.getElementById('roi-years');
+      yearsEl.innerHTML = '';
+      [0, 2, 4, 6, 8, 10].forEach(function (y) {
+        var s = document.createElement('span');
+        s.className = 'roi-year' + (y === breakYear ? ' is-break' : '');
+        s.textContent = y === 0 ? 'Nu' : (y === breakYear ? 'Jaar ' + y + ' ✓' : 'Jaar ' + y);
+        yearsEl.appendChild(s);
+      });
+
+      document.getElementById('roi-label').textContent = 'terugverdiend in ca. ' + breakYear + ' jaar';
+
+      setTimeout(function () {
+        document.getElementById('roi-fill').style.width   = pct + '%';
+        document.getElementById('roi-marker').style.left  = pct + '%';
+      }, 120);
+    }
+
+  }());
+  </script>
+</body>
+</html>
